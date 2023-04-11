@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nlist.proto\x12\x04main\"*\n\x0bItemRequest\x12\r\n\x05group\x18\x01 \x01(\t\x12\x0c\n\x04item\x18\x02 \x01(\t\"\x1f\n\x0cItemResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x1d\n\x0cItemsRequest\x12\r\n\x05group\x18\x01 \x01(\t\"\x1e\n\rItemsResponse\x12\r\n\x05items\x18\x01 \x03(\t2t\n\x0bListService\x12\x30\n\x07\x41\x64\x64Item\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponse\x12\x33\n\x08GetItems\x12\x12.main.ItemsRequest\x1a\x13.main.ItemsResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nlist.proto\x12\x04main\"*\n\x0bItemRequest\x12\r\n\x05group\x18\x01 \x01(\t\x12\x0c\n\x04item\x18\x02 \x01(\t\"0\n\x0cItemResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1d\n\x0cItemsRequest\x12\r\n\x05group\x18\x01 \x01(\t\"-\n\rItemsResponse\x12\r\n\x05group\x18\x01 \x01(\t\x12\r\n\x05items\x18\x02 \x03(\t2\xa9\x01\n\x0bListService\x12\x30\n\x07\x41\x64\x64Item\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponse\x12\x33\n\x08GetItems\x12\x12.main.ItemsRequest\x1a\x13.main.ItemsResponse\x12\x33\n\nDeleteItem\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponseb\x06proto3')
 
 
 
@@ -57,11 +57,11 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _ITEMREQUEST._serialized_start=20
   _ITEMREQUEST._serialized_end=62
   _ITEMRESPONSE._serialized_start=64
-  _ITEMRESPONSE._serialized_end=95
-  _ITEMSREQUEST._serialized_start=97
-  _ITEMSREQUEST._serialized_end=126
-  _ITEMSRESPONSE._serialized_start=128
-  _ITEMSRESPONSE._serialized_end=158
-  _LISTSERVICE._serialized_start=160
-  _LISTSERVICE._serialized_end=276
+  _ITEMRESPONSE._serialized_end=112
+  _ITEMSREQUEST._serialized_start=114
+  _ITEMSREQUEST._serialized_end=143
+  _ITEMSRESPONSE._serialized_start=145
+  _ITEMSRESPONSE._serialized_end=190
+  _LISTSERVICE._serialized_start=193
+  _LISTSERVICE._serialized_end=362
 # @@protoc_insertion_point(module_scope)

@@ -2,28 +2,27 @@ syntax = "proto3";
 
 package main;
 
-
 message ItemRequest {
-  string group = 1;
-
-  string item = 2;
+    string group = 1;
+    string item = 2;
 }
 
 message ItemResponse {
-  bool success = 1;
+    bool success = 1;
+    string message = 2;
 }
 
 message ItemsRequest {
-  string group = 1;
+    string group = 1;
 }
 
 message ItemsResponse {
-  
-  repeated string items = 1;
+    string group = 1;
+    repeated string items = 2;
 }
 
 service ListService {
-  rpc AddItem(ItemRequest) returns (ItemResponse); 
-
-  rpc GetItems(ItemsRequest) returns (ItemsResponse); 
+    rpc AddItem(ItemRequest) returns (ItemResponse);
+    rpc GetItems(ItemsRequest) returns (ItemsResponse);
+    rpc DeleteItem(ItemRequest) returns (ItemResponse);
 }

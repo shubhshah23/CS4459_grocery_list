@@ -36,6 +36,24 @@ class ListService(list_pb2_grpc.ListServiceServicer):
         response = list_pb2.ItemsResponse(items=items)
         return response
 
+    def DeleteItem(self, request: list_pb2.ItemRequest, context: grpc.ServicerContext) -> list_pb2.ItemResponse:
+        group = request.group
+        item = request.item
+
+        if group not in self.lists:
+            self.lists[group] = []
+            self.clients[group] = []
+
+        if item in self.lists[group]:
+            self.lists[group].remove(item)
+            print(f"{item} removed from group {group}")
+            response = list_pb2.ItemResponse(success=True)
+        else:
+            print(f"{item} not found in group {group}")
+            response = list_pb2.ItemResponse(success=False)
+
+        return response
+
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     list_pb2_grpc.add_ListServiceServicer_to_server(ListService(), server)

@@ -24,6 +24,11 @@ class ListServiceStub(object):
                 request_serializer=list__pb2.ItemsRequest.SerializeToString,
                 response_deserializer=list__pb2.ItemsResponse.FromString,
                 )
+        self.DeleteItem = channel.unary_unary(
+                '/main.ListService/DeleteItem',
+                request_serializer=list__pb2.ItemRequest.SerializeToString,
+                response_deserializer=list__pb2.ItemResponse.FromString,
+                )
 
 
 class ListServiceServicer(object):
@@ -41,6 +46,12 @@ class ListServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DeleteItem(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ListServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_ListServiceServicer_to_server(servicer, server):
                     servicer.GetItems,
                     request_deserializer=list__pb2.ItemsRequest.FromString,
                     response_serializer=list__pb2.ItemsResponse.SerializeToString,
+            ),
+            'DeleteItem': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteItem,
+                    request_deserializer=list__pb2.ItemRequest.FromString,
+                    response_serializer=list__pb2.ItemResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +111,22 @@ class ListService(object):
         return grpc.experimental.unary_unary(request, target, '/main.ListService/GetItems',
             list__pb2.ItemsRequest.SerializeToString,
             list__pb2.ItemsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteItem(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/main.ListService/DeleteItem',
+            list__pb2.ItemRequest.SerializeToString,
+            list__pb2.ItemResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
