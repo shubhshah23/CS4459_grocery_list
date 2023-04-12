@@ -4,7 +4,8 @@ package main;
 
 message ItemRequest {
     string group = 1;
-    string item = 2;
+    string password = 2;
+    string item = 3;
 }
 
 message ItemResponse {
@@ -12,17 +13,41 @@ message ItemResponse {
     string message = 2;
 }
 
+message Update {
+    enum UpdateType {
+        ADD = 0;
+        DELETE = 1;
+        CHECK = 2;
+    }
+    UpdateType type = 1;
+    string item = 2;
+}
+
 message ItemsRequest {
     string group = 1;
+    string password = 2;
+}
+
+message Item {
+    string name = 1;
+    bool checked = 2;
 }
 
 message ItemsResponse {
     string group = 1;
-    repeated string items = 2;
+    string password = 2;
+    repeated Item items = 3;
+}
+
+message SubscribeRequest {
+    string group = 1;
+    string password = 2;
 }
 
 service ListService {
     rpc AddItem(ItemRequest) returns (ItemResponse);
+    rpc CheckItem(ItemRequest) returns (ItemResponse);
     rpc GetItems(ItemsRequest) returns (ItemsResponse);
     rpc DeleteItem(ItemRequest) returns (ItemResponse);
+    rpc SubscribeToUpdates(SubscribeRequest) returns (stream Update);
 }

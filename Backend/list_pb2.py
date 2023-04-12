@@ -14,14 +14,18 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nlist.proto\x12\x04main\"*\n\x0bItemRequest\x12\r\n\x05group\x18\x01 \x01(\t\x12\x0c\n\x04item\x18\x02 \x01(\t\"0\n\x0cItemResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x1d\n\x0cItemsRequest\x12\r\n\x05group\x18\x01 \x01(\t\"-\n\rItemsResponse\x12\r\n\x05group\x18\x01 \x01(\t\x12\r\n\x05items\x18\x02 \x03(\t2\xa9\x01\n\x0bListService\x12\x30\n\x07\x41\x64\x64Item\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponse\x12\x33\n\x08GetItems\x12\x12.main.ItemsRequest\x1a\x13.main.ItemsResponse\x12\x33\n\nDeleteItem\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nlist.proto\x12\x04main\"<\n\x0bItemRequest\x12\r\n\x05group\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x0c\n\x04item\x18\x03 \x01(\t\"0\n\x0cItemResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"k\n\x06Update\x12%\n\x04type\x18\x01 \x01(\x0e\x32\x17.main.Update.UpdateType\x12\x0c\n\x04item\x18\x02 \x01(\t\",\n\nUpdateType\x12\x07\n\x03\x41\x44\x44\x10\x00\x12\n\n\x06\x44\x45LETE\x10\x01\x12\t\n\x05\x43HECK\x10\x02\"/\n\x0cItemsRequest\x12\r\n\x05group\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"%\n\x04Item\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07\x63hecked\x18\x02 \x01(\x08\"K\n\rItemsResponse\x12\r\n\x05group\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x19\n\x05items\x18\x03 \x03(\x0b\x32\n.main.Item\"3\n\x10SubscribeRequest\x12\r\n\x05group\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t2\x9b\x02\n\x0bListService\x12\x30\n\x07\x41\x64\x64Item\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponse\x12\x32\n\tCheckItem\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponse\x12\x33\n\x08GetItems\x12\x12.main.ItemsRequest\x1a\x13.main.ItemsResponse\x12\x33\n\nDeleteItem\x12\x11.main.ItemRequest\x1a\x12.main.ItemResponse\x12<\n\x12SubscribeToUpdates\x12\x16.main.SubscribeRequest\x1a\x0c.main.Update0\x01\x62\x06proto3')
 
 
 
 _ITEMREQUEST = DESCRIPTOR.message_types_by_name['ItemRequest']
 _ITEMRESPONSE = DESCRIPTOR.message_types_by_name['ItemResponse']
+_UPDATE = DESCRIPTOR.message_types_by_name['Update']
 _ITEMSREQUEST = DESCRIPTOR.message_types_by_name['ItemsRequest']
+_ITEM = DESCRIPTOR.message_types_by_name['Item']
 _ITEMSRESPONSE = DESCRIPTOR.message_types_by_name['ItemsResponse']
+_SUBSCRIBEREQUEST = DESCRIPTOR.message_types_by_name['SubscribeRequest']
+_UPDATE_UPDATETYPE = _UPDATE.enum_types_by_name['UpdateType']
 ItemRequest = _reflection.GeneratedProtocolMessageType('ItemRequest', (_message.Message,), {
   'DESCRIPTOR' : _ITEMREQUEST,
   '__module__' : 'list_pb2'
@@ -36,12 +40,26 @@ ItemResponse = _reflection.GeneratedProtocolMessageType('ItemResponse', (_messag
   })
 _sym_db.RegisterMessage(ItemResponse)
 
+Update = _reflection.GeneratedProtocolMessageType('Update', (_message.Message,), {
+  'DESCRIPTOR' : _UPDATE,
+  '__module__' : 'list_pb2'
+  # @@protoc_insertion_point(class_scope:main.Update)
+  })
+_sym_db.RegisterMessage(Update)
+
 ItemsRequest = _reflection.GeneratedProtocolMessageType('ItemsRequest', (_message.Message,), {
   'DESCRIPTOR' : _ITEMSREQUEST,
   '__module__' : 'list_pb2'
   # @@protoc_insertion_point(class_scope:main.ItemsRequest)
   })
 _sym_db.RegisterMessage(ItemsRequest)
+
+Item = _reflection.GeneratedProtocolMessageType('Item', (_message.Message,), {
+  'DESCRIPTOR' : _ITEM,
+  '__module__' : 'list_pb2'
+  # @@protoc_insertion_point(class_scope:main.Item)
+  })
+_sym_db.RegisterMessage(Item)
 
 ItemsResponse = _reflection.GeneratedProtocolMessageType('ItemsResponse', (_message.Message,), {
   'DESCRIPTOR' : _ITEMSRESPONSE,
@@ -50,18 +68,33 @@ ItemsResponse = _reflection.GeneratedProtocolMessageType('ItemsResponse', (_mess
   })
 _sym_db.RegisterMessage(ItemsResponse)
 
+SubscribeRequest = _reflection.GeneratedProtocolMessageType('SubscribeRequest', (_message.Message,), {
+  'DESCRIPTOR' : _SUBSCRIBEREQUEST,
+  '__module__' : 'list_pb2'
+  # @@protoc_insertion_point(class_scope:main.SubscribeRequest)
+  })
+_sym_db.RegisterMessage(SubscribeRequest)
+
 _LISTSERVICE = DESCRIPTOR.services_by_name['ListService']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _ITEMREQUEST._serialized_start=20
-  _ITEMREQUEST._serialized_end=62
-  _ITEMRESPONSE._serialized_start=64
-  _ITEMRESPONSE._serialized_end=112
-  _ITEMSREQUEST._serialized_start=114
-  _ITEMSREQUEST._serialized_end=143
-  _ITEMSRESPONSE._serialized_start=145
-  _ITEMSRESPONSE._serialized_end=190
-  _LISTSERVICE._serialized_start=193
-  _LISTSERVICE._serialized_end=362
+  _ITEMREQUEST._serialized_end=80
+  _ITEMRESPONSE._serialized_start=82
+  _ITEMRESPONSE._serialized_end=130
+  _UPDATE._serialized_start=132
+  _UPDATE._serialized_end=239
+  _UPDATE_UPDATETYPE._serialized_start=195
+  _UPDATE_UPDATETYPE._serialized_end=239
+  _ITEMSREQUEST._serialized_start=241
+  _ITEMSREQUEST._serialized_end=288
+  _ITEM._serialized_start=290
+  _ITEM._serialized_end=327
+  _ITEMSRESPONSE._serialized_start=329
+  _ITEMSRESPONSE._serialized_end=404
+  _SUBSCRIBEREQUEST._serialized_start=406
+  _SUBSCRIBEREQUEST._serialized_end=457
+  _LISTSERVICE._serialized_start=460
+  _LISTSERVICE._serialized_end=743
 # @@protoc_insertion_point(module_scope)

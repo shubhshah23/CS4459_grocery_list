@@ -19,6 +19,11 @@ class ListServiceStub(object):
                 request_serializer=list__pb2.ItemRequest.SerializeToString,
                 response_deserializer=list__pb2.ItemResponse.FromString,
                 )
+        self.CheckItem = channel.unary_unary(
+                '/main.ListService/CheckItem',
+                request_serializer=list__pb2.ItemRequest.SerializeToString,
+                response_deserializer=list__pb2.ItemResponse.FromString,
+                )
         self.GetItems = channel.unary_unary(
                 '/main.ListService/GetItems',
                 request_serializer=list__pb2.ItemsRequest.SerializeToString,
@@ -29,12 +34,23 @@ class ListServiceStub(object):
                 request_serializer=list__pb2.ItemRequest.SerializeToString,
                 response_deserializer=list__pb2.ItemResponse.FromString,
                 )
+        self.SubscribeToUpdates = channel.unary_stream(
+                '/main.ListService/SubscribeToUpdates',
+                request_serializer=list__pb2.SubscribeRequest.SerializeToString,
+                response_deserializer=list__pb2.Update.FromString,
+                )
 
 
 class ListServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def AddItem(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CheckItem(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -52,11 +68,22 @@ class ListServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SubscribeToUpdates(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ListServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'AddItem': grpc.unary_unary_rpc_method_handler(
                     servicer.AddItem,
+                    request_deserializer=list__pb2.ItemRequest.FromString,
+                    response_serializer=list__pb2.ItemResponse.SerializeToString,
+            ),
+            'CheckItem': grpc.unary_unary_rpc_method_handler(
+                    servicer.CheckItem,
                     request_deserializer=list__pb2.ItemRequest.FromString,
                     response_serializer=list__pb2.ItemResponse.SerializeToString,
             ),
@@ -69,6 +96,11 @@ def add_ListServiceServicer_to_server(servicer, server):
                     servicer.DeleteItem,
                     request_deserializer=list__pb2.ItemRequest.FromString,
                     response_serializer=list__pb2.ItemResponse.SerializeToString,
+            ),
+            'SubscribeToUpdates': grpc.unary_stream_rpc_method_handler(
+                    servicer.SubscribeToUpdates,
+                    request_deserializer=list__pb2.SubscribeRequest.FromString,
+                    response_serializer=list__pb2.Update.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -92,6 +124,23 @@ class ListService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/main.ListService/AddItem',
+            list__pb2.ItemRequest.SerializeToString,
+            list__pb2.ItemResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CheckItem(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/main.ListService/CheckItem',
             list__pb2.ItemRequest.SerializeToString,
             list__pb2.ItemResponse.FromString,
             options, channel_credentials,
@@ -128,5 +177,22 @@ class ListService(object):
         return grpc.experimental.unary_unary(request, target, '/main.ListService/DeleteItem',
             list__pb2.ItemRequest.SerializeToString,
             list__pb2.ItemResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SubscribeToUpdates(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/main.ListService/SubscribeToUpdates',
+            list__pb2.SubscribeRequest.SerializeToString,
+            list__pb2.Update.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
