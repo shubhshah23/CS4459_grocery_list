@@ -26,11 +26,11 @@ class ListService(list_pb2_grpc.ListServiceServicer):
         self.lock = threading.Lock()
 
     def JoinGroup(self, request: list_pb2.GroupRequest, context: grpc.ServicerContext) -> list_pb2.GroupResponse:
-        print("Joining Group")
+        print("joining group in backup")
+        print(self.lists)
         with self.lock:
             if (request.name, request.password) in self.lists:
                 # The group exists
-                self.sendGroupRequestsToBackup("JoinGroup", request.name, request.password)
                 return list_pb2.GroupResponse(success=True)
             else:
                 # The group doesn't exist
@@ -44,37 +44,7 @@ class ListService(list_pb2_grpc.ListServiceServicer):
             else:
                 # Create the group with an empty list
                 self.lists[(request.name, request.password)] = []
-                self.sendGroupRequestsToBackup("CreateGroup", request.name, request.password)
-                print("\n Creating group {request.name} with password {request.password}")
                 return list_pb2.GroupResponse(success=True)
-            
-    def sendItemRequestsToBackup(self, operation, group, password, item):
-        connectionString = 'localhost:' + str(9000)     
-        with grpc.insecure_channel(connectionString) as channel:
-            stub = list_pb2_grpc.ListServiceStub(channel) 
-
-            if (operation == 'AddItem'):
-                response = stub.AddItem(list_pb2.ItemRequest(group=group, password=password, item=item))
-                print("\n Backup Server Response: Add Item:", response)
-            elif (operation == "CheckItem"):
-                response = stub.CheckItem(list_pb2.ItemRequest(group=group, password=password, item=item))
-                print("\n Backup Server Response: Check Item:", response)
-            elif (operation == "DeleteItem"):
-                response = stub.DeleteItem(list_pb2.ItemRequest(group=group, password=password, item=item))
-                print("\n Backup Server Response: Delete Item:", response)
-         
-            
-    def sendGroupRequestsToBackup(self, operation, group_name, group_password):
-        connectionString = 'localhost:' + str(9000)     
-        with grpc.insecure_channel(connectionString) as channel:
-            stub = list_pb2_grpc.ListServiceStub(channel) 
-
-            if (operation == "CreateGroup"):
-                response = stub.CreateGroup(list_pb2.GroupRequest(name=group_name, password=group_password))
-                print("\n Backup Server Response: Creating group", response)
-            elif (operation == "JoinGroup"):
-                response = stub.JoinGroup(list_pb2.GroupRequest(name=group_name, password=group_password))
-                print("\n Backup Server Response: Creating group:", response)
 
     def AddItem(self, request: list_pb2.ItemRequest, context: grpc.ServicerContext) -> list_pb2.ItemResponse:
         group = request.group
@@ -88,13 +58,8 @@ class ListService(list_pb2_grpc.ListServiceServicer):
         print(f"{item} added to group {group}, {password}")
 
         response = list_pb2.ItemResponse(success=True)
-        self.sendItemRequestsToBackup("AddItem", group, password, item)
-        print("\n pdated List", self.lists)
-
         self._notify_clients(group, password, list_pb2.Update(type=list_pb2.Update.ADD, item=item))
-
-
-        
+        print(self.lists)
         return response
 
     def CheckItem(self, request: list_pb2.ItemRequest, context: grpc.ServicerContext) -> list_pb2.ItemResponse:
@@ -114,10 +79,7 @@ class ListService(list_pb2_grpc.ListServiceServicer):
         print(f"{item} check on group {group}, {password}")
 
         response = list_pb2.ItemResponse(success=success)
-        self.sendItemRequestsToBackup("CheckItem", group, password, item)
-        print("\n Updated List", self.lists)
-
-        
+        print(self.lists)
         return response
 
 
@@ -160,16 +122,13 @@ class ListService(list_pb2_grpc.ListServiceServicer):
             
             print(f"{item} removed from group {group}, {password}")
             response = list_pb2.ItemResponse(success=True)
-            self.sendItemRequestsToBackup("DeleteItem", group, password, item)
-            print("primarserver list", self.lists)
-
-
         else:
             print(f"{item} not found in group {group}, {password}")
             response = list_pb2.ItemResponse(success=False)
 
         if response.success:
             self._notify_clients(group, password, list_pb2.Update(type=list_pb2.Update.DELETE, item=item))
+        print(self.lists)
         return response
 
     def SubscribeToUpdates(self, request: list_pb2.SubscribeRequest, context: grpc.ServicerContext):
@@ -203,9 +162,9 @@ class ListService(list_pb2_grpc.ListServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     list_pb2_grpc.add_ListServiceServicer_to_server(ListService(), server)
-    server.add_insecure_port('[::]:50058')
+    server.add_insecure_port('[::]:9000')
     server.start()
-    print("Server started listening on port 50058")
+    print("Backup Server started listening on port 9000")
     try:
         while True:
             time.sleep(_ONE_DAY_IN_SECONDS)
