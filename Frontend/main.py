@@ -25,33 +25,27 @@ import threading
 import list_pb2
 import list_pb2_grpc
 
-def receive_updates():
+def receive_updates(stop_event):
     global group_name
     global group_pass
-    global group_changed
-    global stub
-    global global_list_container
 
-    while True:
-        if group_changed:
-            group_changed = False
-            continue
+    if group_name and group_pass:
+        subscribe_request = list_pb2.SubscribeRequest(group=group_name, password=group_pass)
+        for update in stub.SubscribeToUpdates(subscribe_request):
+            if update.type == list_pb2.Update.ADD:
+                global_list_container.add_item(None, update.item)
+            elif update.type == list_pb2.Update.DELETE:
+                global_list_container.remove_item(None, update.item)
+            elif update.type == list_pb2.Update.CHECK:
+                print(f"Toggled item '{update.item}'")
+                global_list_container.update_checkbox(None, update.item)
+                
+            print(f"Received update: {update.type}, {update.item}")
 
-        if group_name and group_pass:
-            subscribe_request = list_pb2.SubscribeRequest(group=group_name, password=group_pass)
-            for update in stub.SubscribeToUpdates(subscribe_request):
-                if update.type == list_pb2.Update.ADD:
-                    global_list_container.add_item(None, update.item)
-                elif update.type == list_pb2.Update.DELETE:
-                    global_list_container.remove_item(None, update.item)
-                elif update.type == list_pb2.Update.CHECK:
-                    print(f"Toggled item '{update.item}'")
-                    global_list_container.update_checkbox(None, update.item)
-                print(f"Received update: {update.type}, {update.item}")
-        else:
-            print("You must join or create a group before subscribing to updates.")
-
-
+            if stop_event.is_set():
+                break
+    else:
+        print("You must join or create a group before subscribing to updates.")
 
 
 class CustomCheckBox(ToggleButton):
@@ -261,6 +255,12 @@ class ListContainer(BoxLayout):
     
                 checkbox.rect.source = checkbox.image_source
                 break
+
+    def clear_items(self):
+        # Remove all widgets from the scroll_list
+        for widget in self.scroll_list.children:
+            print(repr(widget))
+        self.scroll_list.clear_widgets()
         
 
 class ListScreen(Screen):
@@ -483,12 +483,29 @@ class GroupScreen(Screen):
         join_group_password = self.join_group_password_input.text
         response = stub.JoinGroup(list_pb2.GroupRequest(name=join_group_name, password=join_group_password))
         if response.success:
+            # Update the group name and password variables
             global group_name
             global group_pass
             group_name = join_group_name
             group_pass = join_group_password
+
             global group_changed
             group_changed = True
+            # Restart thread for receiving updates
+            global stop_update_event
+            stop_update_event.set()
+            stop_update_event.clear()  # Reset the event for the new thread
+            threading.Thread(target=receive_updates, args=(stop_update_event,)).start()
+
+            # Get the updated group list from server
+            global global_list_container
+            global_list_container.clear_items()
+            response = stub.GetItems(list_pb2.ItemsRequest(group=group_name, password=group_pass))
+            for item in response.items:
+                print(item.name, item.checked)
+                global_list_container.create_item(item.name, checked=item.checked)  # Call the create_item method with the item name and checked status
+
+            # Update "my group" screen
             self.update_my_group_content()
             print("Join group succeeded", flush=True)
         else:
@@ -498,18 +515,35 @@ class GroupScreen(Screen):
 
     def create_group(self, *args):
         print("test")
+        
         create_group_name = self.create_group_name_input.text
         create_group_password = self.create_group_password_input.text
         response = stub.CreateGroup(list_pb2.GroupRequest(name=create_group_name, password=create_group_password))
         if response.success:
+            # Update the group name and password variables
             global group_name
             global group_pass
             group_name = create_group_name
             group_pass = create_group_password
+
             global group_changed
             group_changed = True
-            print("Create group succeeded", flush=True)
+            # Restart thread for receiving updates
+            global stop_update_event
+            stop_update_event.set()
+            stop_update_event.clear()  # Reset the event for the new thread
+            threading.Thread(target=receive_updates, args=(stop_update_event,)).start()
+             # Get the updated group list from server
+            global global_list_container
+            global_list_container.clear_items()
+            response = stub.GetItems(list_pb2.ItemsRequest(group=group_name, password=group_pass))
+            for item in response.items:
+                print(item.name, item.checked)
+                global_list_container.create_item(item.name, checked=item.checked)  # Call the create_item method with the item name and checked status
+
+            # Update "my group" screen
             self.update_my_group_content()
+            print("Create group succeeded", flush=True)
         else:
             print("Create group failed")
 
@@ -533,7 +567,7 @@ class MyApp(App):
             list_screen.list_container.create_item(item.name, checked=item.checked)  # Call the create_item method with the item name and checked status
 
         
-        current_update_thread = threading.Thread(target=receive_updates)
+        current_update_thread = threading.Thread(target=receive_updates, args=(stop_update_event,))
         current_update_thread.start()
 
         return screen_manager
@@ -551,6 +585,8 @@ if __name__ == '__main__':
     global_list_container = None
     current_update_thread = None
     group_changed = False
+    stop_update_event = threading.Event()
+
 
 
     with grpc.insecure_channel('localhost:50058') as channel:
