@@ -25,6 +25,25 @@ class ListService(list_pb2_grpc.ListServiceServicer):
         self.subscriptions: Dict[(str, str), List[grpc.ServicerContext]] = {}
         self.lock = threading.Lock()
 
+    def JoinGroup(self, request: list_pb2.GroupRequest, context: grpc.ServicerContext) -> list_pb2.GroupResponse:
+        with self.lock:
+            if (request.name, request.password) in self.lists:
+                # The group exists
+                return list_pb2.GroupResponse(success=True)
+            else:
+                # The group doesn't exist
+                return list_pb2.GroupResponse(success=False)
+        
+    def CreateGroup(self, request: list_pb2.GroupRequest, context: grpc.ServicerContext) -> list_pb2.GroupResponse:
+        with self.lock: 
+            if (request.name, request.password) in self.lists:
+                # The group already exists
+                return list_pb2.GroupResponse(success=False)
+            else:
+                # Create the group with an empty list
+                self.lists[(request.name, request.password)] = []
+                return list_pb2.GroupResponse(success=True)
+
     def AddItem(self, request: list_pb2.ItemRequest, context: grpc.ServicerContext) -> list_pb2.ItemResponse:
         group = request.group
         password = request.password
