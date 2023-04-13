@@ -44,10 +44,21 @@ message SubscribeRequest {
     string password = 2;
 }
 
+message GroupRequest {
+    string name = 1;
+    string password = 2;
+}
+
+message GroupResponse {
+    bool success = 1;
+}
+
 service ListService {
     rpc AddItem(ItemRequest) returns (ItemResponse);
     rpc CheckItem(ItemRequest) returns (ItemResponse);
     rpc GetItems(ItemsRequest) returns (ItemsResponse);
     rpc DeleteItem(ItemRequest) returns (ItemResponse);
+    rpc JoinGroup(GroupRequest) returns (GroupResponse);
+    rpc CreateGroup(GroupRequest) returns (GroupResponse);
     rpc SubscribeToUpdates(SubscribeRequest) returns (stream Update);
 }
