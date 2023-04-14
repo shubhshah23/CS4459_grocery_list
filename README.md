@@ -7,8 +7,14 @@ Follow the instructions here on how to install kivy if not already installed: ht
 
 Make sure to run the application in this sequence:
 
-Backup server
+Backup server - Backupserver.py
 
-Primary Server
+Primary Server - betaprimaryserver.py
 
 Clients (as many as required)
+ 
+Port numbers the system operates on:
+
+Backup server - '[::]:9000'
+
+Primary server - '[::]:50058'
