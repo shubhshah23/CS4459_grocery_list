@@ -58,12 +58,10 @@ class CustomCheckBox(ToggleButton):
         super(CustomCheckBox, self).__init__(**kwargs)
         self.stub = stub
         self.group_name = group_name
-        user_triggered = BooleanProperty(False)
         self.group_pass = group_pass
         self.background_normal = ''
         self.background_down = ''
         self.background_color = [0, 0, 0, 0]  # set the background color to transparent
-        #self.bind(state=self.on_state)
         self.bind(pos=self.update_rect, size=self.update_rect)
 
         Clock.schedule_once(self.create_image, 0)  # Add this line to schedule the image creation
@@ -95,7 +93,11 @@ class CustomCheckBox(ToggleButton):
 
     def update_rect(self, *args):
         size = 56  # Set the size of the square
-        self.rect.pos = (self.parent.x + 10, int(self.center_y - size/2))
+        try:
+            self.rect.pos = (self.parent.x + 10, int(self.center_y - size/2))
+        except:
+            pass 
+        
 
 
 class RoundedButton(Button):
@@ -212,7 +214,7 @@ class ListContainer(BoxLayout):
         item_layout = instance.item
         item_label = item_layout.children[0].children[1]  # get the label widget
         item_text = item_label.text
-        print(f"tryna remove item {item_text}")
+        print(f"Remove item {item_text}")
         response = stub.DeleteItem(list_pb2.ItemRequest(group=group_name, password=group_pass, item=item_text))
         print("DeleteItem response:", response.success)
 

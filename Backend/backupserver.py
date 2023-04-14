@@ -89,7 +89,7 @@ class ListService(list_pb2_grpc.ListServiceServicer):
         password = request.password
 
         if (group, password) not in self.lists:
-            self.lists[(group, password)] = []
+            return list_pb2.ItemsResponse(items=None)
 
         items = self.lists[(group, password)]
         formatted_items = []
