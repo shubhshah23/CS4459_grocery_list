@@ -8,6 +8,9 @@ Follow the instructions here on how to install kivy if not already installed: ht
 
 
 Make sure to run the application in this sequence:
+
 Backup server
+
 Primary Server
+
 Clients (as many as required)
